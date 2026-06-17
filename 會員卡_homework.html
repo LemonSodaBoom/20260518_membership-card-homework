@@ -1,0 +1,220 @@
+<!doctype html>
+<html lang="zh-TW">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>虛空教會員卡即時產生器</title>
+    <!-- Vue 3 CDN -->
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <link rel="stylesheet" href="./css/會員卡_homework.css" />
+  </head>
+  <body>
+    <!-- Vue 實例掛載點 -->
+    <!-- 這裡我們利用陣列動態綁定 Class：全域 VIP 狀態、以及三大卡片樣式型態 -->
+    <div id="app">
+      <div class="global-container" :class="[isVIP ? 'vip-activated' : '']">
+        <!-- 花瓣飄落：只有在 VIP 模式下才會觸發渲染 -->
+        <template v-if="isVIP">
+          <div
+            v-for="(petal, i) in petals"
+            :key="i"
+            class="petal"
+            :style="{
+                 left: petal.left + '%',
+                 width: petal.size + 'px',
+                 height: petal.size + 'px',
+                 animationDuration: petal.duration + 's',
+                 animationDelay: petal.delay + 's'
+             }"
+          ></div>
+        </template>
+
+        <!-- 一體成型會員面板：Class 隨 level 與 isVIP 雙向即時變更 -->
+        <div
+          class="main-panel"
+          :class="[isVIP ? 'vip-activated' : 'card-' +  level] "
+        >
+          <!-- 左側：輸入表單控制中樞 -->
+          <div class="form-area">
+            <h1 class="form-title">
+              {{ isVIP ? '虛空教．信徒登錄' : '一般會員登入' }}
+            </h1>
+
+            <!-- 1. 姓名輸入 (v-model 雙向綁定) -->
+            <div class="input-group">
+              <label>會員姓名 Name</label>
+              <input type="text" v-model="name" placeholder="請輸入姓名..." />
+            </div>
+
+            <!-- 2. 年齡輸入 (v-model.number 確保數值型態) -->
+            <div class="input-group">
+              <label>年齡 Age</label>
+              <input
+                type="number"
+                v-model.number="age"
+                placeholder="請輸入年齡..."
+              />
+            </div>
+
+            <!-- 3. 會員等級選擇 (切換時觸發卡片整體Style巨大形變) -->
+            <div class="input-group">
+              <label>會員等級 Level</label>
+              <select v-model="level">
+                <option value="general">一般會員 (General)</option>
+                <option value="gold">黃金會員 (Gold)</option>
+                <option value="platinum">白金會員 (Platinum)</option>
+              </select>
+            </div>
+
+            <!-- 4. 頭像圖片網址 (即時更改右側 src) -->
+            <div class="input-group">
+              <label>頭像圖片網址 Avatar URL</label>
+              <input
+                type="text"
+                v-model="avatarUrl"
+                placeholder="請貼上圖片網址..."
+              />
+            </div>
+
+            <!-- 5. 是否顯示詳細資料 (Checkbox 雙向綁定) -->
+            <div class="checkbox-group" style="margin-top: 15px">
+              <label
+                style="
+                  display: flex;
+                  align-items: center;
+                  gap: 8px;
+                  cursor: pointer;
+                "
+              >
+                <input type="checkbox" v-model="showDetails" />
+                <span>顯示卡片詳細資料</span>
+              </label>
+            </div>
+
+            <!-- 6. 是否啟用 VIP 模式 -->
+            <div class="vip-box" @click="toggleVIP">
+              <input type="checkbox" v-model="isVIP" @click.stop />
+              <span>啟動 VIP 虛空教模式</span>
+            </div>
+          </div>
+
+          <!-- 右側：會員小卡顯影區 (與表單封裝在同一張 Panel 內) -->
+          <div class="card-area">
+            <!-- 條件1：使用者尚未輸入姓名時，右側完全隱藏，只顯示提示 -->
+            <div v-if="!name" class="no-data">[ We all came from there ]</div>
+
+            <!-- 條件2：當輸入姓名後，立刻零時差顯現卡片內容 -->
+            <div v-else class="card-wrapper">
+              <!-- 頭像框：造型隨 [一般/黃金/白金/VIP] 產生劇烈形變 -->
+              <div class="avatar-frame">
+                <img
+                  :src="avatarUrl || './src/01.jpg'"
+                  alt="Avatar"
+                  class="avatar-img"
+                />
+              </div>
+
+              <!-- 等級標籤 -->
+              <div class="badge">{{ levelTitle }}</div>
+
+              <!-- 實時會員姓名 -->
+              <div class="display-name">{{ name }}</div>
+
+              <!-- 詳細資料區塊：由勾選框即時控制顯示(v-if) -->
+              <div class="info-panel" v-if="showDetails">
+                <p style="margin: 4px 0">
+                  <strong>年齡：</strong>{{ age || '不詳' }} 歲
+                </p>
+                <p style="margin: 4px 0">
+                  <strong>會員狀態：</strong>{{ isVIP ? '虛空教核心信徒' :
+                  '常規訪客' }}
+                </p>
+                <p
+                  style="
+                    margin: 4px 0;
+                    font-size: 0.85rem;
+                    font-style: italic;
+                    opacity: 0.8;
+                  "
+                >
+                  {{ isVIP ? '「我々は皆、そこから来た」' : '「忘れるな。」' }}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const { createApp, ref, computed, watch } = Vue;
+
+      createApp({
+        setup() {
+          // --- 【狀態定義：響應式變數】 ---
+          // Vue 3 使用 ref 來定義基本資料型態，在 JS 中修改它們時需要加上 .value
+          const name = ref("");
+          const age = ref(null);
+          const level = ref("general");
+          const avatarUrl = ref("");
+          const showDetails = ref(false);
+          const isVIP = ref(false);
+          const petals = ref([]); // 儲存花瓣物理數據的響應式陣列
+
+          // --- { 計算屬性：Computed } ---
+          // 根據狀態即時計算出對應的標題，與 Vue 2 的寫法完全不同
+          const levelTitle = computed(() => {
+            if (isVIP.value) return "虛空信徒";
+            const titles = {
+              general: "一般會員",
+              gold: "黃金尊榮 ． 會員",
+              platinum: "白金裂刃 ． 高級會員",
+            };
+            return titles[level.value];
+          });
+
+          // --- 【方法定義：Methods】 ---
+          const toggleVIP = () => {
+            isVIP.value = !isVIP.value;
+          };
+
+          const triggerPetals = () => {
+            petals.value = [];
+            // 隨機生成 30 片利刃花瓣的物理參數
+            for (let i = 0; i < 30; i++) {
+              petals.value.push({
+                left: Math.random() * 100,
+                size: Math.random() * 10 + 10, // 10px ~ 20px
+                duration: Math.random() * 3 + 3, // 3s ~ 6s 掉落時間
+                delay: Math.random() * 3, // 0s ~ 3s 隨機延遲
+              });
+            }
+          };
+
+          // --- 【監聽器：Watch】 ---
+          // 當 isVIP 的值發生改變時，立刻執行對應的 callback 函式
+          watch(isVIP, (activated) => {
+            if (activated) {
+              triggerPetals();
+            }
+          });
+
+          // --- 【關鍵：必須 return 釋出】 ---
+          // 在 Vue 3 setup 中定義的一切，必須透過這個 return 丟出去，HTML 模板才抓得到
+          return {
+            name,
+            age,
+            level,
+            avatarUrl,
+            showDetails,
+            isVIP,
+            petals,
+            levelTitle,
+            toggleVIP,
+            triggerPetals,
+          };
+        },
+      }).mount("#app");
+    </script>
+  </body>
+</html>
