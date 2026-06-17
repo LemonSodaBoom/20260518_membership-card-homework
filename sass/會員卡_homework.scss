@@ -1,0 +1,366 @@
+/* --- 基礎設定 --- */
+* {
+  box-sizing: border-box;
+}
+body,
+html {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  font-family: "PingFang TC", "Microsoft JhengHei", sans-serif;
+  transition: background 0.5s ease;
+}
+
+h1 {
+  margin: 0;
+}
+
+/* --- 【1. 全域背景切換區】 --- */
+/* 預設狀態：平靜溫和的背景 */
+.global-container {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: radial-gradient(circle, #f9f6fc 20%, #e6d6f8 100%);
+  transition: all 0.6s cubic-bezier(0.19, 1, 0.22, 1);
+
+  /* VIP 模式激活：全域瞬間轉為深色【虛空教領域】 */
+  &.vip-activated {
+    background: radial-gradient(circle at center, #1b0a2a 0%, #05020a 100%);
+    /* 銳利的震動動畫，模擬被刀斬開的空間衝擊 */
+    animation: space-slash 0.4s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+  }
+}
+
+/* --- 【2. 一體成型卡片本體】 --- */
+.main-panel {
+  display: flex;
+  width: 900px;
+  height: 550px;
+  background: rgba(255, 255, 255, 0.75);
+  border: 2px solid #c9b3e6;
+  border-radius: 24px;
+  box-shadow: 0 20px 50px rgba(140, 104, 203, 0.15);
+  backdrop-filter: blur(20px);
+  transition: all 0.5s cubic-bezier(0.25, 1, 0.5, 1);
+  overflow: hidden;
+  z-index: 10;
+}
+
+/* --- 【3. 會員等級切換：展現三種截然不同的卡片效果】 --- */
+/* [一般會員卡面]：優雅的紫藤花粉紫色柔光 */
+.main-panel.card-general {
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.85) 0%,
+    rgba(240, 230, 250, 0.9) 100%
+  );
+  box-shadow: 0 20px 50px rgba(140, 104, 203, 0.2);
+}
+/* [黃金會員卡面] */
+.main-panel.card-gold {
+  background: linear-gradient(
+    135deg,
+    rgba(255, 248, 220, 0.9) 0%,
+    rgba(255, 215, 0, 0.2) 50%,
+    rgba(218, 165, 32, 0.4) 100%
+  );
+  border-color: #ffd700;
+  box-shadow: 0 20px 50px rgba(218, 165, 32, 0.4);
+}
+/* [白金會員卡面] */
+.main-panel.card-platinum {
+  background: linear-gradient(
+    135deg,
+    rgba(230, 235, 240, 0.9) 0%,
+    rgba(160, 175, 192, 0.3) 60%,
+    rgba(200, 210, 220, 0.6) 100%
+  );
+  border-color: #a0b2c6;
+  box-shadow: 0 20px 50px rgba(160, 175, 192, 0.5);
+}
+
+/* --- 【4. VIP 模式下的卡片異變】 --- */
+/* 當勾選 VIP 時，卡片強制覆蓋為黑色與暗紫漸層，邊框化為銳利銀色刀芒 */
+.vip-activated.main-panel {
+  background: linear-gradient(145deg, #12061c 0%, #050209 100%);
+  border: 2px solid #ffffff; /* 銀色鋒利邊框 */
+  box-shadow:
+    0 0 40px rgba(179, 136, 255, 0.4),
+    0 0 100px rgba(255, 255, 255, 0.1);
+  border-radius: 4px 40px 4px 40px; /* 刀鋒對角 */
+}
+
+/* --- 左側：操作表單 --- */
+.form-area {
+  flex: 1;
+  padding: 40px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  border-right: 1px solid rgba(140, 104, 203, 0.2);
+  transition: all 0.5s ease;
+}
+
+.vip-activated .form-area {
+  border-right: 1px solid rgba(255, 255, 255, 0.2);
+  color: #e0d8ea;
+}
+
+.form-title {
+  font-size: 1.6rem;
+  margin-top: 0;
+  margin-bottom: 25px;
+  color: #6842a6;
+  font-weight: 900;
+}
+
+.vip-activated .form-title {
+  color: #b388ff;
+}
+
+.vip-activated .display-name {
+  color: #f2eaff;
+}
+
+.input-group {
+  margin-bottom: 18px;
+}
+.input-group label {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: bold;
+  margin-bottom: 6px;
+  opacity: 0.8;
+}
+.input-group input,
+.input-group select {
+  width: 90%;
+  padding: 10px;
+  border: 1px solid #b59fdb;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.5);
+  outline: none;
+  transition: all 0.3s;
+}
+
+.vip-activated .input-group input,
+.vip-activated .input-group select {
+  background: rgba(0, 0, 0, 0.4);
+  border-color: #7c4dff;
+  color: #fff;
+}
+.input-group input:focus,
+.input-group select:focus {
+  border-color: #6842a6;
+  box-shadow: 0 0 10px rgba(104, 66, 166, 0.2);
+}
+
+/* VIP 開關美化 */
+.vip-box {
+  margin-top: 25px;
+  padding: 12px;
+  background: #f0eafd;
+  border-left: 5px solid #6842a6;
+  border-radius: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: bold;
+}
+.vip-activated .vip-box {
+  background: rgba(124, 77, 255, 0.2);
+  border-left-color: #ffffff;
+  color: #ffffff;
+}
+
+/* --- 右側：實時小卡顯示區 --- */
+.card-area {
+  flex: 1.2;
+  padding: 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.no-data {
+  font-size: 1rem;
+  color: #8c7b99;
+  letter-spacing: 2px;
+  border: 1px dashed #8c7b99;
+  padding: 20px;
+  border-radius: 12px;
+}
+
+/* 卡片內層全息特效 */
+.card-wrapper {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  animation: card-appear 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.175) forwards;
+}
+
+/* 頭像樣式切換 */
+.avatar-frame {
+  width: 130px;
+  height: 130px;
+  border-radius: 50%;
+  padding: 5px;
+  background: #6842a6;
+  margin-bottom: 15px;
+  transition: all 0.5s ease;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+.card-gold .avatar-frame {
+  background: #ffd700;
+}
+.card-platinum .avatar-frame {
+  background: #a0b2c6;
+}
+
+/* VIP下頭像化為極度銳利的尖角形狀 */
+.vip-activated .avatar-frame {
+  border-radius: 4px 25px 4px 25px !important;
+  background: #ffffff;
+  box-shadow: 0 0 25px #b388ff;
+}
+
+.avatar-img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  background: #fff;
+  transition: all 0.5s ease;
+}
+.vip-activated .avatar-img {
+  border-radius: 2px 22px 2px 22px !important;
+}
+
+/* 徽章樣式完全獨立 */
+.badge {
+  padding: 5px 15px;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  font-weight: bold;
+  color: #fff;
+  margin-bottom: 15px;
+}
+.card-general .badge {
+  background: #6842a6;
+}
+.card-gold .badge {
+  background: #d4af37;
+  color: #332300;
+  box-shadow: 0 0 15px rgba(255, 215, 0, 0.6);
+}
+.card-platinum .badge {
+  background: #5e6f82;
+  box-shadow: 0 0 15px rgba(160, 178, 198, 0.6);
+}
+.vip-activated .badge {
+  background: #ffffff !important;
+  color: #12061c !important;
+  font-weight: 900;
+}
+
+.display-name {
+  font-size: 2.2rem;
+  font-weight: 900;
+  margin: 5px 0;
+  color: inherit;
+  letter-spacing: 2px;
+}
+
+/* 詳細資料彈出區 */
+.info-panel {
+  width: 85%;
+  margin-top: 15px;
+  padding: 15px;
+  background: rgba(255, 255, 255, 0.4);
+  border-radius: 12px;
+  border-left: 4px solid #6842a6;
+  text-align: left;
+}
+.card-gold .info-panel {
+  border-left-color: #ffd700;
+  background: rgba(255, 248, 220, 0.5);
+}
+.card-platinum .info-panel {
+  border-left-color: #a0b2c6;
+  background: rgba(230, 235, 240, 0.5);
+}
+.vip-activated .info-panel {
+  background: rgba(255, 255, 255, 0.05) !important;
+  border-color: #ffffff !important;
+  color: #f0e6fa;
+}
+
+/* --- 【5. 花瓣與銀刀光動畫特效】 --- */
+.petal {
+  position: absolute;
+  top: -20px;
+  background: linear-gradient(135deg, #a77df2, #4a148c);
+  border-radius: 2px 12px 2px 12px; /* 刀片狀花瓣 */
+  opacity: 0;
+  pointer-events: none;
+  z-index: 2;
+  animation: fall linear infinite;
+}
+
+/* 空間被斬擊的劇烈抖動動畫 */
+// @keyframes space-slash {
+//   10%,
+//   90% {
+//     transform: translate3d(-2px, 0, 0) scale(1.01);
+//   }
+//   20%,
+//   80% {
+//     transform: translate3d(4px, -2px, 0) scale(0.99);
+//   }
+//   30%,
+//   50%,
+//   70% {
+//     transform: translate3d(-6px, 4px, 0) scale(1.02);
+//   }
+//   40%,
+//   60% {
+//     transform: translate3d(6px, -4px, 0) scale(0.98);
+//   }
+// }
+
+@keyframes fall {
+  0% {
+    transform: translateY(0) rotate(0deg) scale(0.4);
+    opacity: 0;
+  }
+  15% {
+    opacity: 0.9;
+  }
+  90% {
+    opacity: 0.9;
+  }
+  100% {
+    transform: translateY(110vh) rotate(540deg) scale(0.6);
+    opacity: 0;
+  }
+}
+
+@keyframes card-appear {
+  from {
+    opacity: 0;
+    transform: translateY(15px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
